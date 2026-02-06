@@ -13,6 +13,7 @@ import InstagramSection from "./instagramSection";
 import RecipeGridTwo from "./RecipeGridTwo";
 import Newsletter from "../components/Newsletter";
 import Footer from "../components/footer";
+import Link from "next/link";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -55,10 +56,11 @@ const catagories = [
   },
 ];
 
-const recipes = [
+export const recipes = [
   {
     id: 1,
     title: "Big and Juicy Wagyu Beef Cheeseburger",
+    slug: "big-and-juicy-wagyu-beef-cheeseburger",
     image: "/photo/hr1.png",
     time: "30 Minutes",
     category: "Snack",
@@ -66,6 +68,7 @@ const recipes = [
   {
     id: 2,
     title: "Fresh Lime Roasted Salmon with Ginger Sauce",
+    slug: "fresh-lime-roasted-salmon-with-ginger-sauce",
     image: "/photo/hr2.png",
     time: "30 Minutes",
     category: "Fish",
@@ -73,6 +76,7 @@ const recipes = [
   {
     id: 3,
     title: "Strawberry Oatmeal Pancake with Honey Syrup",
+    slug: "strawberry-oatmeal-pancake-with-honey-syrup",
     image: "/photo/hr3.png",
     time: "30 Minutes",
     category: "Breakfast",
@@ -80,6 +84,7 @@ const recipes = [
   {
     id: 4,
     title: "Fresh and Healthy Mixed Mayonnaise Salad",
+    slug: "fresh-and-healthy-mixed-mayonnaise-salad",
     image: "/photo/hr4.png",
     time: "30 Minutes",
     category: "Healthy",
@@ -87,6 +92,7 @@ const recipes = [
   {
     id: 5,
     title: "Chicken Meatballs with Cream Cheese",
+    slug: "chicken-meatballs-with-cream-cheese",
     image: "/photo/hr5.png",
     time: "30 Minutes",
     category: "Meat",
@@ -95,6 +101,7 @@ const recipes = [
   {
     id: 7,
     title: "Fruity Pancake with Orange & Blueberry",
+    slug: "fruity-pancake-with-orange-and-blueberry",
     image: "/photo/hr6.png",
     time: "30 Minutes",
     category: "Sweet",
@@ -102,6 +109,7 @@ const recipes = [
   {
     id: 8,
     title: "The Best Easy One Pot Chicken and Rice",
+    slug: "the-best-easy-one-pot-chicken-and-rice",
     image: "/photo/hr7.png",
     time: "30 Minutes",
     category: "Snack",
@@ -109,6 +117,7 @@ const recipes = [
   {
     id: 9,
     title: "The Creamiest Creamy Chicken and Bacon Pasta",
+    slug: "the-creamiest-creamy-chicken-and-bacon-pasta",
     image: "/photo/hr8.png",
     time: "30 Minutes",
     category: "Noodles",
@@ -415,62 +424,70 @@ const Hero = () => {
             const isFavorite = favorites.includes(recipe.id);
 
             return (
-              <motion.div
+              <Link
                 key={recipe.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                viewport={{ once: true }}
-                whileHover={{ scale: 1.02 }}
-                className="bg-linear-to-b from-white to-[#E7FAFE]/30 rounded-[30px] p-4 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow group"
+                href={`/recipes/${recipe.slug || recipe.id}`}
               >
-                <div className="relative w-full h-56 rounded-[20px] overflow-hidden">
-                  <Image
-                    src={recipe.image ?? "/r1.jpg"}
-                    alt={recipe.title ?? "Recipe"}
-                    width={800}
-                    height={560}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  />
-
-                  <button
-                    onClick={() => toggleFavorite(recipe.id)}
-                    className="absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md"
-                  >
-                    <Heart
-                      size={20}
-                      className={
-                        isFavorite
-                          ? "fill-red-500 text-red-500"
-                          : "text-gray-300"
-                      }
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  viewport={{ once: true }}
+                  whileHover={{ scale: 1.02 }}
+                  className="bg-linear-to-b from-white to-[#E7FAFE]/30 rounded-[30px] p-4 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow group cursor-pointer h-full"
+                >
+                  <div className="relative w-full h-56 rounded-[20px] overflow-hidden">
+                    <Image
+                      src={recipe.image ?? "/r1.jpg"}
+                      alt={recipe.title ?? "Recipe"}
+                      width={800}
+                      height={560}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     />
-                  </button>
-                </div>
 
-                <div className="px-2 space-y-3">
-                  <h3 className="font-bold text-xl leading-tight line-clamp-2 h-14">
-                    {recipe.title}
-                  </h3>
-                  <div className="flex gap-4 pb-2">
-                    <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
-                      <Timer size={16} /> {recipe.time}
-                    </div>
-                    <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
-                      <Utensils size={16} /> {recipe.category}
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault(); // Mencegah navigasi Link saat klik heart
+                        e.stopPropagation(); // Mencegah event bubbling
+                        toggleFavorite(recipe.id);
+                      }}
+                      className="absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md z-10"
+                    >
+                      <Heart
+                        size={20}
+                        className={
+                          isFavorite
+                            ? "fill-red-500 text-red-500"
+                            : "text-gray-300"
+                        }
+                      />
+                    </button>
+                  </div>
+
+                  <div className="px-2 space-y-3">
+                    <h3 className="font-bold text-xl leading-tight line-clamp-2 h-14 group-hover:text-orange-500 transition-colors">
+                      {recipe.title}
+                    </h3>
+                    <div className="flex gap-4 pb-2">
+                      <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
+                        <Timer size={16} /> {recipe.time}
+                      </div>
+                      <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
+                        <Utensils size={16} /> {recipe.category}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
+                </motion.div>
+              </Link>
             );
           })}
         </div>
       </section>
-      <ChefSection/>
-      <InstagramSection/>
-      <RecipeGridTwo/>
-      <Newsletter/>
-      <Footer/>
+      <ChefSection />
+      <InstagramSection />
+      <RecipeGridTwo />
+      <Newsletter />
+      <Footer />
     </section>
   );
 };
