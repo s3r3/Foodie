@@ -14,6 +14,7 @@ import RecipeGridTwo from "./RecipeGridTwo";
 import Newsletter from "../components/Newsletter";
 import Footer from "../components/footer";
 import Link from "next/link";
+import { recipes } from "../data/recipes";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -56,74 +57,6 @@ const catagories = [
   },
 ];
 
-export const recipes = [
-  {
-    id: 1,
-    title: "Big and Juicy Wagyu Beef Cheeseburger",
-    slug: "big-and-juicy-wagyu-beef-cheeseburger",
-    image: "/photo/hr1.png",
-    time: "30 Minutes",
-    category: "Snack",
-  },
-  {
-    id: 2,
-    title: "Fresh Lime Roasted Salmon with Ginger Sauce",
-    slug: "fresh-lime-roasted-salmon-with-ginger-sauce",
-    image: "/photo/hr2.png",
-    time: "30 Minutes",
-    category: "Fish",
-  },
-  {
-    id: 3,
-    title: "Strawberry Oatmeal Pancake with Honey Syrup",
-    slug: "strawberry-oatmeal-pancake-with-honey-syrup",
-    image: "/photo/hr3.png",
-    time: "30 Minutes",
-    category: "Breakfast",
-  },
-  {
-    id: 4,
-    title: "Fresh and Healthy Mixed Mayonnaise Salad",
-    slug: "fresh-and-healthy-mixed-mayonnaise-salad",
-    image: "/photo/hr4.png",
-    time: "30 Minutes",
-    category: "Healthy",
-  },
-  {
-    id: 5,
-    title: "Chicken Meatballs with Cream Cheese",
-    slug: "chicken-meatballs-with-cream-cheese",
-    image: "/photo/hr5.png",
-    time: "30 Minutes",
-    category: "Meat",
-  },
-  { id: 6, isAd: true }, // Iklan di tengah grid
-  {
-    id: 7,
-    title: "Fruity Pancake with Orange & Blueberry",
-    slug: "fruity-pancake-with-orange-and-blueberry",
-    image: "/photo/hr6.png",
-    time: "30 Minutes",
-    category: "Sweet",
-  },
-  {
-    id: 8,
-    title: "The Best Easy One Pot Chicken and Rice",
-    slug: "the-best-easy-one-pot-chicken-and-rice",
-    image: "/photo/hr7.png",
-    time: "30 Minutes",
-    category: "Snack",
-  },
-  {
-    id: 9,
-    title: "The Creamiest Creamy Chicken and Bacon Pasta",
-    slug: "the-creamiest-creamy-chicken-and-bacon-pasta",
-    image: "/photo/hr8.png",
-    time: "30 Minutes",
-    category: "Noodles",
-  },
-];
-
 const Hero = () => {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const paragraphRef = useRef<HTMLParagraphElement>(null);
@@ -131,7 +64,7 @@ const Hero = () => {
   const badgeRef = useRef<HTMLDivElement | null>(null);
   const imageRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef(null);
-  // Refs untuk elemen melayang
+  const featuredRecipe = recipes[0]; // Refs untuk elemen melayang
   const meatRef = useRef(null);
   const onionRef = useRef(null);
   const tomatoRef = useRef(null);
@@ -245,7 +178,7 @@ const Hero = () => {
             transition={{ delay: 0.2 }}
             className="text-5xl md:text-6xl font-bold leading-tight text-black"
           >
-            Spicy delicious <br /> chicken wings
+            {featuredRecipe?.title}
           </motion.h1>
 
           <motion.p
@@ -254,17 +187,28 @@ const Hero = () => {
             transition={{ delay: 0.4 }}
             className="text-gray-500 max-w-md leading-relaxed"
           >
-            Lorem ipsum dolor sit amet, consectetuipisicing elit, sed do eiusmod
-            tempor incididunt ut labore et dolore magna aliqut enim ad minim.
+            {featuredRecipe?.description}
           </motion.p>
 
           <div className="flex gap-4">
             <div className="flex items-center gap-2 bg-black/5 px-4 py-2 rounded-full text-sm font-medium">
-              <Timer size={18} /> 30 Minutes
+              <Timer size={18} /> {featuredRecipe?.time}
             </div>
             <div className="flex items-center gap-2 bg-black/5 px-4 py-2 rounded-full text-sm font-medium">
-              <Utensils size={18} /> Chicken
+              <Utensils size={18} /> {featuredRecipe?.category}
             </div>
+          </div>
+
+          {/* Ingredients preview */}
+          <div className="mt-6 flex flex-wrap gap-2">
+            {featuredRecipe?.ingredients?.main?.slice(0, 4).map((ing, i) => (
+              <span
+                key={i}
+                className="bg-white/80 text-sm px-3 py-1 rounded-full shadow-sm text-gray-700"
+              >
+                {ing}
+              </span>
+            ))}
           </div>
 
           <div className="pt-10 flex items-center justify-between">
@@ -278,8 +222,8 @@ const Hero = () => {
                 />
               </div>
               <div>
-                <p className="font-bold text-sm">John Smith</p>
-                <p className="text-xs text-gray-400">15 March 2022</p>
+                <p className="font-bold text-sm">{featuredRecipe?.author}</p>
+                <p className="text-xs text-gray-400">{featuredRecipe?.date}</p>
               </div>
             </div>
 

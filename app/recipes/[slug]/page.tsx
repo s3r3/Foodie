@@ -13,9 +13,12 @@ import {
 } from "lucide-react";
 import { useStore } from "@/app/store/useStore";
 import Image from "next/image";
+import Link from "next/link";
 import ShareModal from "@/app/components/ShareModal";
 import Newsletter from "@/app/components/Newsletter";
 import Footer from "@/app/components/footer";
+import { recipes } from "../../data/recipes";
+import Navbar from "@/app/components/nav";
 
 const RecipeDetailPage = ({
   params,
@@ -26,8 +29,6 @@ const RecipeDetailPage = ({
   const { checkedSteps, toggleStep } = useStore();
   const { setShareModalOpen } = useStore();
   const currentUrl = typeof window !== "undefined" ? window.location.href : "";
-  const isStepDone = (id: number) =>
-    checkedSteps.includes(`${slug}-step-${id}`);
   // Di dalam komponen RecipeDetailPage
   const handlePrint = () => {
     window.print();
@@ -36,56 +37,36 @@ const RecipeDetailPage = ({
   const handleShare = () => {
     setShareModalOpen(true);
   };
-  const steps = [
-    {
-      id: 1,
-      title: "Lorem ipsum dolor sit amet",
-      description:
-        "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.",
-      image: "/images/cooking-step.jpg", // Gambar di bawah langkah 1
-    },
-    {
-      id: 2,
-      title: "Lorem ipsum dolor sit amet",
-      description:
-        "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.",
-    },
-    {
-      id: 3,
-      title: "Lorem ipsum dolor sit amet",
-      description:
-        "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.",
-    },
-  ];
-  const otherRecipes = [
-    {
-      title: "Chicken Meatball with Creamy Chees...",
-      author: "Andreas Paula",
-      image: "/r5.jpg",
-    },
-    {
-      title: "The Creamiest Creamy Chicken and...",
-      author: "Andreas Paula",
-      image: "/r9.jpg",
-    },
-    {
-      title: "The Best Easy One Pot Chicken and Rice",
-      author: "Andreas Paula",
-      image: "/r8.jpg",
-    },
-  ];
   // `params` is a Promise in client components — unwrap with React.use()
   const { slug } = React.use(params) as { slug: string };
-  const ingredients = {
-    main: [
-      "Lorem ipsum dolor sit amet",
-      "Lorem ipsum dolor sit amet",
-      "Lorem ipsum dolor sit amet",
-    ],
-    sauce: ["Lorem ipsum dolor sit amet", "Lorem ipsum dolor sit amet"],
-  };
+  // find recipe by slug
+  const recipe = recipes.find((r) => r.slug === slug) ?? recipes[0];
+
+  // steps / directions from data
+  const steps = recipe?.directions ?? [];
+
+  // other recipes for sidebar (exclude current)
+  const otherRecipes = recipes
+    .filter((r) => r.slug !== recipe.slug)
+    .slice(0, 3)
+    .map((r) => ({
+      title: r.title,
+      author: r.author,
+      slug: r.slug,
+      image: r.image,
+    }));
+
+  // recommended for bottom section (full recipe objects)
+  const recommendedRecipes = recipes
+    .filter((r) => r.slug !== recipe.slug)
+    .slice(0, 4);
+
+  const ingredients = recipe?.ingredients ?? { main: [], sauce: [] };
+
   const isChecked = (key: string) =>
     checkedIngredients.includes(`${slug}-${key}`);
+  const isStepDone = (id: number) =>
+    checkedSteps.includes(`${slug}-step-${id}`);
   // Animasi Varians
   const fadeIn = {
     initial: { opacity: 0, y: 20 },
@@ -95,11 +76,15 @@ const RecipeDetailPage = ({
 
   return (
     <main className="pt-28 pb-20 px-6 md:px-16 max-w-7xl mx-auto">
+      <div className="flex justify-center w-full">
+        <Navbar />
+      </div>
+
       {/* Header Section */}
       <section className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
         <motion.div {...fadeIn}>
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Health Japanese Fried Rice
+            {recipe?.title}
           </h1>
           <div className="flex flex-wrap items-center gap-6 text-gray-500">
             <div className="flex items-center gap-2 border-r pr-6 border-gray-200">
@@ -112,8 +97,8 @@ const RecipeDetailPage = ({
                 />{" "}
               </div>
               <div>
-                <p className="text-black font-bold text-sm">John Smith</p>
-                <p className="text-xs">15 March 2022</p>
+                <p className="text-black font-bold text-sm">{recipe?.author}</p>
+                <p className="text-xs">{recipe?.date}</p>
               </div>
             </div>
             <div className="flex items-center gap-2 border-r pr-6 border-gray-200">
@@ -122,7 +107,7 @@ const RecipeDetailPage = ({
                 <p className="text-xs font-bold uppercase text-black">
                   Prep Time
                 </p>
-                <p className="text-xs">15 Minutes</p>
+                <p className="text-xs">{recipe?.prepTime}</p>
               </div>
             </div>
             <div className="flex items-center gap-2 border-r pr-6 border-gray-200">
@@ -131,12 +116,14 @@ const RecipeDetailPage = ({
                 <p className="text-xs font-bold uppercase text-black">
                   Cook Time
                 </p>
-                <p className="text-xs">15 Minutes</p>
+                <p className="text-xs">{recipe?.cookTime}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <Utensils size={20} className="text-black" />
-              <p className="text-sm font-medium text-black">Chicken</p>
+              <p className="text-sm font-medium text-black">
+                {recipe?.category}
+              </p>
             </div>
           </div>
         </motion.div>
@@ -179,8 +166,8 @@ const RecipeDetailPage = ({
           className="lg:col-span-2 relative aspect-video rounded-[40px] overflow-hidden group cursor-pointer"
         >
           <Image
-            src="/images/fried-rice-detail.jpg"
-            alt="Recipe Video"
+            src={recipe?.image ?? "/images/fried-rice-detail.jpg"}
+            alt={recipe?.title ?? "Recipe Video"}
             className="w-full h-full object-cover"
             width={500}
             height={500}
@@ -201,11 +188,11 @@ const RecipeDetailPage = ({
           <h3 className="text-2xl font-bold mb-6">Nutrition Information</h3>
           <div className="space-y-4">
             {[
-              { label: "Calories", value: "219.9 kcal" },
-              { label: "Total Fat", value: "10.7 g" },
-              { label: "Protein", value: "7.9 g" },
-              { label: "Carbohydrate", value: "22.3 g" },
-              { label: "Cholesterol", value: "37.4 mg" },
+              { label: "Calories", value: recipe?.nutrition?.calories },
+              { label: "Total Fat", value: recipe?.nutrition?.fat },
+              { label: "Protein", value: recipe?.nutrition?.protein },
+              { label: "Carbohydrate", value: recipe?.nutrition?.carbs },
+              { label: "Cholesterol", value: recipe?.nutrition?.cholesterol },
             ].map((item) => (
               <div
                 key={item.label}
@@ -285,7 +272,7 @@ const RecipeDetailPage = ({
               <div>
                 <h3 className="text-xl font-bold mb-6">For the sauce</h3>
                 <div className="space-y-6">
-                  {ingredients.sauce.map((item, idx) => {
+                  {(ingredients.sauce ?? []).map((item, idx) => {
                     const key = `sauce-${idx}`;
                     return (
                       <div
@@ -390,17 +377,18 @@ const RecipeDetailPage = ({
             <h2 className="text-3xl font-bold mb-8">Other Recipe</h2>
             <div className="space-y-6">
               {otherRecipes.map((recipe, idx) => (
-                <div
+                <Link
                   key={idx}
+                  href={`/recipes/${recipe.slug}`}
                   className="flex items-center gap-4 group cursor-pointer"
                 >
-                  <div className="w-32 h-24 rounded-2xl overflow-hidden shrink-0">
+                  <div className="w-32 h-24 rounded-2xl overflow-hidden shrink-0 relative">
                     <Image
                       src={recipe.image}
                       alt={recipe.title}
+                      width={128}
+                      height={96}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform"
-                      width={500}
-                      height={500}
                     />
                   </div>
                   <div>
@@ -411,7 +399,7 @@ const RecipeDetailPage = ({
                       By {recipe.author}
                     </p>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -454,33 +442,37 @@ const RecipeDetailPage = ({
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Kamu bisa menggunakan array .map dari data resep yang sudah ada */}
-          {otherRecipes.concat(otherRecipes[0]).map((recipe, idx) => (
-            <div key={idx} className="space-y-4 group cursor-pointer">
+          {recommendedRecipes.map((r) => (
+            <Link
+              key={r.slug}
+              href={`/recipes/${r.slug}`}
+              className="space-y-4 group cursor-pointer"
+            >
               <div className="relative aspect-4/3 rounded-[30px] overflow-hidden">
                 <Image
-                  src={recipe.image}
-                  alt={recipe.title}
+                  src={r.image}
+                  alt={r.title}
                   fill
                   className="object-cover group-hover:scale-110 transition-transform duration-500"
                 />
               </div>
               <h4 className="font-bold text-lg leading-tight line-clamp-2 h-14">
-                {recipe.title}
+                {r.title}
               </h4>
               <div className="flex gap-4">
                 <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
-                  <Timer size={16} /> 30 Minutes
+                  <Timer size={16} /> {r.time}
                 </div>
                 <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
-                  <Utensils size={16} /> Healthy
+                  <Utensils size={16} /> {r.category}
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
-      <Footer/>
-      <ShareModal url={currentUrl} title="Health Japanese Fried Rice" />
+      <Footer />
+      <ShareModal url={currentUrl} title={recipe?.title ?? "Recipe"} />
     </main>
   );
 };
