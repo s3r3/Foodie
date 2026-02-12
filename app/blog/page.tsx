@@ -7,6 +7,7 @@ import { blogPosts, tastyRecipes } from "../data/blogData";
 import Newsletter from "../components/Newsletter";
 import Footer from "../components/footer";
 import Link from "next/link";
+import Navbar from "../components/nav";
 
 const BlogPage = () => {
   const containerRef = useRef(null);
@@ -28,6 +29,7 @@ const BlogPage = () => {
   return (
     <main ref={containerRef} className="bg-white min-h-screen pt-28 pb-20">
       {/* SECTION: HEADER & SEARCH (Sesuai gambar image_2b93a1.png) */}
+      <Navbar />
       <section className="px-6 max-w-4xl mx-auto text-center mb-20">
         <h1 className="animate-fade text-5xl md:text-6xl font-bold mb-6 text-black">
           Blog & Article
@@ -160,7 +162,7 @@ const BlogPage = () => {
 
             <div className="relative z-10 w-full aspect-square max-w-50">
               <Image
-                src="/photo/healthy-plate.png"
+                src="https://images.unsplash.com/photo-1543353071-873f17a7a088?q=80&w=800"
                 alt="Healthy"
                 fill
                 className="object-contain drop-shadow-2xl"

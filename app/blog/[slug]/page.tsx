@@ -1,64 +1,135 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import Image from "next/image";
-import { useParams } from "next/navigation";
-import { blogPosts, tastyRecipes } from "@/app/data/blogData";
-import Navbar from "@/app/components/nav";
-import Newsletter from "@/app/components/Newsletter";
-import Footer from "@/app/components/footer";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+import { Facebook, Twitter, Instagram, Timer, Utensils } from "lucide-react";
+import Navbar from "@/app/components/nav";
+import Lenis from "@studio-freight/lenis";
+import { recipes } from "@/app/data/recipes";
+import Link from "next/link";
+import Newsletter from "@/app/components/Newsletter";
+import { useParams } from "next/navigation";
+import { blogPosts } from "@/app/data/blogData";
+import Footer from "@/app/components/footer";
 
-const BlogDetail = () => {
-  const { slug } = useParams();
+// Register GSAP Plugin
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
-  // Cari data post berdasarkan slug
-  const post = blogPosts.find((p) => p.slug === slug) || blogPosts[0];
+// --- Component: Navbar ---
 
-  const mainRef = useRef(null);
+// --- Main Page Component ---
+export default function BlogPost() {
+  const params = useParams();
+  const slug = params?.slug as string | undefined;
+  const post = blogPosts.find((p) => p.slug === slug) ?? blogPosts[0];
+  const containerRef = useRef(null);
+  const heroImageRef = useRef(null);
+  const recommendedRecipes = recipes.slice(0, 4);
+  useLayoutEffect(() => {
+    // 1. Initialize Smooth Scroll (Lenis)
+    const lenis = new Lenis();
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
 
-  useEffect(() => {
-    gsap.from(".animate-up", {
-      opacity: 0,
-      y: 40,
-      duration: 1,
-      stagger: 0.2,
-      ease: "power4.out",
-    });
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+
+      // 2. Entrance Animation (Hero)
+      tl.from(".nav-anim", { y: -30, opacity: 0, duration: 1 })
+        .from(".title-anim", { y: 60, opacity: 0, duration: 1.2 }, "-=0.6")
+        .from(
+          ".meta-anim",
+          { y: 20, opacity: 0, stagger: 0.1, duration: 0.8 },
+          "-=0.8",
+        )
+        .from(
+          heroImageRef.current,
+          {
+            scale: 1.2,
+            clipPath: "inset(20% 20% 20% 20% round 60px)",
+            duration: 2,
+          },
+          "-=1",
+        );
+
+      // 3. ScrollTrigger: Reveal Content
+      gsap.from(".reveal-text", {
+        scrollTrigger: {
+          trigger: ".reveal-text",
+          start: "top 85%",
+        },
+        y: 40,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
+      });
+
+      // 4. ScrollTrigger: Sidebar Icons Stagger
+      gsap.from(".sidebar-icon", {
+        scrollTrigger: {
+          trigger: ".sidebar-icon",
+          start: "top 90%",
+        },
+        x: 40,
+        opacity: 0,
+        stagger: 0.15,
+        duration: 0.8,
+        ease: "back.out(1.7)",
+      });
+    }, containerRef);
+
+    return () => {
+      ctx.revert();
+      lenis.destroy();
+    };
   }, []);
 
   return (
-    <main ref={mainRef} className="bg-white min-h-screen pt-32">
+    <div
+      ref={containerRef}
+      className="bg-white selection:bg-orange-100 selection:text-orange-600"
+    >
       <Navbar />
+      <article className="max-w-7xl mx-auto px-6 py-16 md:py-24 ">
+        {/* Header */}
+        <header className="text-center mb-16 pt-10">
+          <h1 className="title-anim text-5xl md:text-7xl font-extrabold mb-10 tracking-tight leading-[1.1]">
+            {post.title}
+          </h1>
 
-      {/* HEADER ARTIKEL (Sesuai image_7e3f7c.jpg) */}
-      <section className="max-w-4xl mx-auto px-6 text-center mb-16">
-        <h1 className="animate-up text-4xl md:text-6xl font-bold mb-8 leading-tight">
-          {post.title}
-        </h1>
-        <div className="animate-up flex items-center justify-center gap-6 mb-12">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full overflow-hidden relative">
-              <Image
-                src="https://i.pravatar.cc/100"
-                alt="author"
-                fill
-                className="object-cover"
-              />
+          <div className="meta-anim flex flex-col md:flex-row items-center justify-center gap-8">
+            <div className="flex items-center gap-4">
+              <div className="relative w-12 h-12 rounded-full overflow-hidden shadow-lg border-2 border-white">
+                <Image
+                  src="https://i.pravatar.cc/150?u=john"
+                  alt="Author"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <span className="font-bold text-lg">{post.author}</span>
             </div>
-            <span className="font-bold text-sm">{post.author}</span>
+            <div className="hidden md:block w-px h-6 bg-gray-200"></div>
+            <time className="text-gray-400 font-medium">{post.date}</time>
           </div>
-          <div className="w-px h-6 bg-gray-200" />
-          <span className="text-gray-400 text-sm font-medium">{post.date}</span>
-        </div>
-        <p className="animate-up text-gray-500 text-lg leading-relaxed">
-          {post.excerpt}
-        </p>
-      </section>
 
-      {/* GAMBAR UTAMA (Sesuai image_7e3f7c.jpg) */}
-      <section className="max-w-7xl mx-auto px-6 md:px-16 mb-20 animate-up">
-        <div className="relative w-full aspect-21/9 rounded-[40px] overflow-hidden shadow-xl">
+          <p className="meta-anim mt-12 max-w-2xl mx-auto text-gray-500 text-lg leading-relaxed italic">
+            {post.excerpt}
+          </p>
+        </header>
+
+        {/* Hero Image Container */}
+        <div
+          ref={heroImageRef}
+          className="relative w-full aspect-video md:h-162.5 rounded-[40px] md:rounded-[60px] overflow-hidden mb-20 shadow-2xl shadow-orange-100"
+        >
           <Image
             src={post.image}
             alt={post.title}
@@ -67,158 +138,167 @@ const BlogDetail = () => {
             priority
           />
         </div>
-      </section>
 
-      {/* KONTEN UTAMA & SIDEBAR */}
-      <section className="max-w-7xl mx-auto px-6 md:px-16 grid grid-cols-1 lg:grid-cols-3 gap-16 mb-32">
-        {/* KOLOM KIRI: DIRECTIONS & INGREDIENTS (Sesuai image_6917b9.png & image_6890d9.png) */}
-        <div className="lg:col-span-2 space-y-20">
-          {/* Ingredients Section */}
-          <div>
-            <h2 className="text-3xl font-bold mb-8">Ingredients</h2>
-            <div className="space-y-6">
-              <h3 className="text-xl font-bold">For main dish</h3>
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-4 py-4 border-b border-gray-100"
-                >
-                  <div
-                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${i === 1 ? "bg-black border-black" : "border-gray-200"}`}
-                  >
-                    {i === 1 && (
-                      <div className="w-2 h-2 bg-white rounded-full" />
-                    )}
-                  </div>
-                  <span
-                    className={`text-lg ${i === 1 ? "text-gray-300 line-through" : "text-black"}`}
-                  >
-                    Lorem ipsum dolor sit amet
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Directions Section */}
-          <div className="space-y-12">
-            <h2 className="text-3xl font-bold">Directions</h2>
-            {[1, 2, 3].map((step) => (
-              <div key={step} className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-6 h-6 rounded-full border-2 border-gray-200 mt-1 shrink-0" />
-                  <h3 className="text-xl font-bold">
-                    {step}. Lorem ipsum dolor sit amet
-                  </h3>
-                </div>
-                <p className="text-gray-500 leading-relaxed pl-10">
-                  Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut
-                  odit aut fugit, sed quia consequuntur magni dolores eos qui
-                  ratione voluptatem sequi nesciunt.
+        {/* Content & Sidebar Grid */}
+        <div className="flex md:grid-cols-12 gap-16">
+          <section className="md:col-span-8 reveal-text flex flex-col gap-5">
+            <section className=" flex flex-col">
+              <h2 className="text-3xl md:text-4xl font-bold mb-8">
+                How did you start out in the food industry?
+              </h2>
+              <div className="prose prose-orange prose-lg text-gray-600 space-y-8 leading-loose">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Curabitur ac ultrices odio. Nulla at congue diam, at dignissim
+                  turpis. Ut vehicula sed velit a faucibus. In feugiat
+                  vestibulum velit vel pulvinar. Fusce id mollis ex.
                 </p>
-                {step === 1 && (
-                  <div className="relative w-full aspect-video rounded-[30px] overflow-hidden ml-10">
-                    <Image
-                      src="/photo/cooking.jpg"
-                      alt="cooking"
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                )}
+                <p className="border-l-4 border-orange-500 pl-6 py-2 font-medium text-gray-900 bg-gray-50 rounded-r-xl">
+                  &quot;The secret to being a great chef isn&apos;t just the
+                  recipe, it&apos;s the passion you pour into the pan while the
+                  fire is high.&quot;
+                </p>
+                <p>
+                  Praesent feugiat elementum ex ut suscipit. Integer efficitur,
+                  sem ut convallis matti, libero diam sodales matti, velit nisl
+                  porta augue, non hendrerit lorem nisi vel diam.
+                </p>
               </div>
-            ))}
-          </div>
-        </div>
+            </section>
 
-        {/* SIDEBAR (Sesuai image_6890d9.png) */}
-        <aside className="space-y-16">
-          <div>
-            <h2 className="text-2xl font-bold mb-8">Other Recipe</h2>
-            <div className="space-y-8">
-              {tastyRecipes.map((recipe) => (
-                <div
-                  key={recipe.id}
-                  className="flex gap-4 group cursor-pointer"
-                >
-                  <div className="relative w-32 h-24 rounded-2xl overflow-hidden shrink-0">
-                    <Image
-                      src={recipe.image}
-                      alt={recipe.title}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                  <div className="flex flex-col justify-center">
-                    <h4 className="font-bold text-sm leading-tight group-hover:text-orange-500 transition-colors">
-                      {recipe.title}
-                    </h4>
-                    <p className="text-[11px] text-gray-400 mt-2 font-medium">
-                      By {recipe.author}
-                    </p>
-                  </div>
+            <section className="md:col-span-8 space-y-16  flex flex-col gap-10">
+              {/* Q2 Section */}
+              <div className="reveal-text">
+                <h2 className="text-3xl font-bold mb-6">
+                  What do you like most about your job?
+                </h2>
+                <p className="text-lg text-gray-600 leading-relaxed">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Curabitur ac ultrices odio. Nulla at congue diam, at dignissim
+                  turpis. Ut vehicula sed velit a faucibus. In feugiat
+                  vestibulum velit vel pulvinar. Fusce id mollis ex.
+                </p>
+              </div>
+
+              {/* Q3 Section with Image */}
+              <div className="reveal-text">
+                <h2 className="text-3xl font-bold mb-6">
+                  Do you cook at home on your days off?
+                </h2>
+                <div className="relative w-full h-100 rounded-4xl overflow-hidden mb-8 group">
+                  <Image
+                    src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=1000"
+                    alt="Cooking at home"
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
                 </div>
-              ))}
-            </div>
-          </div>
+                <p className="text-lg text-gray-600 leading-relaxed">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Curabitur ac ultrices odio. Nulla at congue diam, at dignissim
+                  turpis. Ut vehicula sed velit a faucibus. In feugiat
+                  vestibulum velit vel pulvinar.
+                </p>
+              </div>
 
-          {/* Ad Banner Hijau */}
-          <div className="relative rounded-[40px] overflow-hidden bg-[#05422C] p-8 text-center aspect-4/5 flex flex-col items-center justify-between">
-            <p className="text-white italic text-lg mt-4">
-              Don&apos;t forget to eat healthy food
-            </p>
-            <div className="relative w-40 h-40">
-              <Image
-                src="/photo/healthy-plate.png"
-                alt="Healthy"
-                fill
-                className="object-contain"
-              />
-            </div>
-            <p className="text-white/40 text-[10px] tracking-widest uppercase">
-              www.foodieland.com
-            </p>
-          </div>
-        </aside>
-      </section>
+              {/* Q4 Section */}
+              <div className="reveal-text">
+                <h2 className="text-3xl font-bold mb-6">
+                  What would your advice be to young people looking to get their
+                  foot in the door?
+                </h2>
+                <p className="text-lg text-gray-600 leading-relaxed">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Curabitur ac ultrices odio. Nulla at congue diam, at dignissim
+                  turpis. Ut vehicula sed velit a faucibus. In feugiat
+                  vestibulum velit vel pulvinar.
+                </p>
+              </div>
 
-      {/* RELATED RECIPES (Sesuai image_7317aa.png) */}
-      <section className="bg-white py-20 border-t border-gray-50">
-        <div className="max-w-7xl mx-auto px-6 md:px-16 text-center">
-          <h2 className="text-4xl font-bold mb-16">
+              {/* Big Quote Block */}
+              <div className="reveal-text py-12 px-8 md:px-16 bg-linear-to-br from-gray-50 to-orange-50/30 rounded-[40px] border border-orange-100/50 my-12">
+                <blockquote className="text-2xl md:text-4xl font-extrabold italic leading-tight text-gray-900">
+                  &quot;Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Curabitur ac ultrices odio.&quot;
+                </blockquote>
+              </div>
+
+              {/* Q5 Section */}
+              <div className="reveal-text">
+                <h2 className="text-3xl font-bold mb-6">
+                  What is the biggest misconception that people have about being
+                  a professional chef?
+                </h2>
+                <p className="text-lg text-gray-600 leading-relaxed">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Curabitur ac ultrices odio. Nulla at congue diam, at dignissim
+                  turpis. Ut vehicula sed velit a faucibus. In feugiat
+                  vestibulum velit vel pulvinar. Fusce id mollis ex. Praesent
+                  feugiat elementum ex ut suscipit.
+                </p>
+              </div>
+            </section>
+          </section>
+
+          <aside className="md:col-span-4 flex flex-col items-center md:items-end gap-10">
+            <div className="text-center md:text-right">
+              <h4 className="sidebar-icon font-black text-xs uppercase tracking-[0.3em] text-gray-400 mb-8">
+                Share this story
+              </h4>
+              <div className="flex flex-col gap-10 items-center">
+                <button className="sidebar-icon group p-4 bg-gray-50 rounded-full hover:bg-black hover:text-white transition-all duration-300">
+                  <Facebook size={22} />
+                </button>
+                <button className="sidebar-icon group p-4 bg-gray-50 rounded-full hover:bg-black hover:text-white transition-all duration-300">
+                  <Twitter size={22} />
+                </button>
+                <button className="sidebar-icon group p-4 bg-gray-50 rounded-full hover:bg-black hover:text-white transition-all duration-300">
+                  <Instagram size={22} />
+                </button>
+              </div>
+            </div>
+          </aside>
+        </div>
+        <Newsletter />
+        <section className="mt-32 mb-20">
+          <h2 className="text-4xl font-bold text-center mb-16">
             You may like these recipe too
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="text-left group cursor-pointer">
-                <div className="relative aspect-square rounded-[30px] overflow-hidden mb-4">
+            {/* Kamu bisa menggunakan array .map dari data resep yang sudah ada */}
+            {recommendedRecipes.map((r) => (
+              <Link
+                key={r.slug}
+                href={`/recipes/${r.slug}`}
+                className="space-y-4 group cursor-pointer"
+              >
+                <div className="relative aspect-4/3 rounded-[30px] overflow-hidden">
                   <Image
-                    src={`/photo/r${i}.jpg`}
-                    alt="recipe"
+                    src={r.image}
+                    alt={r.title}
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform"
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
                   />
-                  <div className="absolute top-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">
-                    <span className="text-red-500">❤️</span>
+                </div>
+                <h4 className="font-bold text-lg leading-tight line-clamp-2 h-14">
+                  {r.title}
+                </h4>
+                <div className="flex gap-4">
+                  <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
+                    <Timer size={16} /> {r.time}
+                  </div>
+                  <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
+                    <Utensils size={16} /> {r.category}
                   </div>
                 </div>
-                <h4 className="font-bold text-lg mb-4 line-clamp-2">
-                  Mixed Tropical Fruit Salad
-                </h4>
-                <div className="flex gap-4 text-xs font-bold text-gray-400">
-                  <span className="flex items-center gap-1">⏱️ 30 Min</span>
-                  <span className="flex items-center gap-1">🍴 Healthy</span>
-                </div>
-              </div>
+              </Link>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
+      </article>
 
-      <Newsletter />
-      <Footer />
-    </main>
+      {/* Footer Spacer */}
+      <Footer/>
+    </div>
   );
-};
-
-export default BlogDetail;
+}

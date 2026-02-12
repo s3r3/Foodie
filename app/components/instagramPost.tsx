@@ -20,11 +20,11 @@ export const InstagramPost = ({ image, caption }: PostProps) => {
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden">
             <Image
-              src="/photo/ava1.png"
+              src="https://images.unsplash.com/photo-1531123414780-fd03be8a57b9?q=80&w=100"
               alt="Foodieland"
-              width={50} // Specify the width of the image
-              height={50} // Specify the height of the image
-            />{" "}
+              width={50}
+              height={50}
+            />
           </div>
           <div>
             <p className="text-xs font-bold leading-none">Foodieland.</p>

@@ -41,7 +41,8 @@ export const recipes: Recipe[] = [
     id: 1,
     title: "Big and Juicy Wagyu Beef Cheeseburger",
     slug: "big-and-juicy-wagyu-beef-cheeseburger",
-    image: "/photo/hr1.png",
+    image:
+      "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=1200",
     time: "30 Minutes",
     category: "Snack",
     author: "John Smith",
@@ -73,7 +74,8 @@ export const recipes: Recipe[] = [
         title: "Prepare the Patty",
         description:
           "Bentuk daging wagyu menjadi patty bundar. Berikan sedikit garam dan lada hitam di kedua sisi.",
-        image: "/images/cooking-step.jpg",
+        image:
+          "https://images.unsplash.com/photo-1512058564366-c9e3f8f0b9c4?q=80&w=1200",
       },
       {
         id: 2,
@@ -87,7 +89,8 @@ export const recipes: Recipe[] = [
     id: 2,
     title: "Fresh Lime Roasted Salmon with Ginger Sauce",
     slug: "fresh-lime-roasted-salmon-with-ginger-sauce",
-    image: "/photo/hr2.png",
+    image:
+      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1200",
     time: "30 Minutes",
     category: "Fish",
     author: "Andreas Paula",
@@ -113,7 +116,8 @@ export const recipes: Recipe[] = [
         title: "Marination",
         description:
           "Lumuri salmon dengan jeruk nipis dan diamkan selama 10 menit.",
-        image: "/images/cooking-step.jpg",
+        image:
+          "https://images.unsplash.com/photo-1512058564366-c9e3f8f0b9c4?q=80&w=1200",
       },
     ],
   },
@@ -121,7 +125,8 @@ export const recipes: Recipe[] = [
     id: 3,
     title: "Strawberry Oatmeal Pancake with Honey Syrup",
     slug: "strawberry-oatmeal-pancake-with-honey-syrup",
-    image: "/photo/hr3.png",
+    image:
+      "https://images.unsplash.com/photo-1498837167922-ddd27525d352?q=80&w=1200",
     time: "30 Minutes",
     category: "Breakfast",
     author: "John Smith",
@@ -152,7 +157,8 @@ export const recipes: Recipe[] = [
         title: "Blending",
         description:
           "Haluskan oatmeal menggunakan blender hingga menjadi tepung halus.",
-        image: "/images/cooking-step.jpg",
+        image:
+          "https://images.unsplash.com/photo-1512058564366-c9e3f8f0b9c4?q=80&w=1200",
       },
     ],
   },
@@ -160,7 +166,8 @@ export const recipes: Recipe[] = [
     id: 4,
     title: "Fresh and Healthy Mixed Mayonnaise Salad",
     slug: "fresh-and-healthy-mixed-mayonnaise-salad",
-    image: "/photo/hr4.png",
+    image:
+      "https://images.unsplash.com/photo-1447078806655-40579c2520d6?q=80&w=1200",
     time: "30 Minutes",
     category: "Healthy",
     author: "Andreas Paula",
@@ -186,7 +193,8 @@ export const recipes: Recipe[] = [
         title: "Mixing",
         description:
           "Campurkan semua sayuran ke dalam wadah besar dan aduk rata.",
-        image: "/images/cooking-step.jpg",
+        image:
+          "https://images.unsplash.com/photo-1512058564366-c9e3f8f0b9c4?q=80&w=1200",
       },
     ],
   },
@@ -194,7 +202,8 @@ export const recipes: Recipe[] = [
     id: 5,
     title: "Chicken Meatballs with Cream Cheese",
     slug: "chicken-meatballs-with-cream-cheese",
-    image: "/photo/hr5.png",
+    image:
+      "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1200",
     time: "30 Minutes",
     category: "Meat",
     author: "John Smith",
@@ -219,7 +228,8 @@ export const recipes: Recipe[] = [
         id: 1,
         title: "Stuffing",
         description: "Isi bola ayam dengan satu sendok teh krim keju.",
-        image: "/images/cooking-step.jpg",
+        image:
+          "https://images.unsplash.com/photo-1512058564366-c9e3f8f0b9c4?q=80&w=1200",
       },
     ],
   },
@@ -227,7 +237,8 @@ export const recipes: Recipe[] = [
     id: 7,
     title: "Fruity Pancake with Orange & Blueberry",
     slug: "fruity-pancake-with-orange-and-blueberry",
-    image: "/photo/hr6.png",
+    image:
+      "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?q=80&w=1200",
     time: "30 Minutes",
     category: "Sweet",
     author: "Andreas Paula",
@@ -253,7 +264,8 @@ export const recipes: Recipe[] = [
         title: "Cooking",
         description:
           "Masak pancake hingga kecokelatan dan taburkan blueberry di atasnya.",
-        image: "/images/cooking-step.jpg",
+        image:
+          "https://images.unsplash.com/photo-1512058564366-c9e3f8f0b9c4?q=80&w=1200",
       },
     ],
   },
@@ -261,7 +273,8 @@ export const recipes: Recipe[] = [
     id: 8,
     title: "The Best Easy One Pot Chicken and Rice",
     slug: "the-best-easy-one-pot-chicken-and-rice",
-    image: "/photo/hr7.png",
+    image:
+      "https://images.unsplash.com/photo-1523986371872-9d3ba2e2f0b2?q=80&w=1200",
     time: "30 Minutes",
     category: "Snack",
     author: "John Smith",
@@ -286,7 +299,8 @@ export const recipes: Recipe[] = [
         id: 1,
         title: "Sautéing",
         description: "Tumis bawang putih dan ayam hingga berubah warna.",
-        image: "/images/cooking-step.jpg",
+        image:
+          "https://images.unsplash.com/photo-1512058564366-c9e3f8f0b9c4?q=80&w=1200",
       },
     ],
   },
@@ -294,7 +308,8 @@ export const recipes: Recipe[] = [
     id: 9,
     title: "The Creamiest Creamy Chicken and Bacon Pasta",
     slug: "the-creamiest-creamy-chicken-and-bacon-pasta",
-    image: "/photo/hr8.png",
+    image:
+      "https://images.unsplash.com/photo-1512058564366-c9e3f8f0b9c4?q=80&w=1200",
     time: "30 Minutes",
     category: "Noodles",
     author: "Andreas Paula",
@@ -319,7 +334,8 @@ export const recipes: Recipe[] = [
         id: 1,
         title: "Boiling",
         description: "Rebus pasta hingga al dente (tidak terlalu lunak).",
-        image: "/images/cooking-step.jpg",
+        image:
+          "https://images.unsplash.com/photo-1512058564366-c9e3f8f0b9c4?q=80&w=1200",
       },
     ],
   },

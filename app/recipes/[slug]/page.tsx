@@ -166,7 +166,10 @@ const RecipeDetailPage = ({
           className="lg:col-span-2 relative aspect-video rounded-[40px] overflow-hidden group cursor-pointer"
         >
           <Image
-            src={recipe?.image ?? "/images/fried-rice-detail.jpg"}
+            src={
+              recipe?.image ??
+              "https://images.unsplash.com/photo-1512058564366-c9e3f8f0b9c4?q=80&w=1200"
+            }
             alt={recipe?.title ?? "Recipe Video"}
             className="w-full h-full object-cover"
             width={500}
@@ -407,7 +410,7 @@ const RecipeDetailPage = ({
           {/* Ad Section Sidebar */}
           <div className="relative rounded-[30px] overflow-hidden aspect-4/5 flex flex-col justify-end p-8 text-center text-white">
             <Image
-              src="/images/ad-sidebar.jpg"
+              src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=800"
               className="absolute inset-0 w-full h-full object-cover"
               alt="Ad"
               width={500}
@@ -421,7 +424,7 @@ const RecipeDetailPage = ({
               </p>
               <div className="w-24 h-24 mx-auto bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center">
                 <Image
-                  src="/images/healthy-plate.png"
+                  src="https://images.unsplash.com/photo-1543353071-873f17a7a088?q=80&w=400"
                   className="w-16 h-16 object-contain"
                   alt="plate"
                   width={64}
